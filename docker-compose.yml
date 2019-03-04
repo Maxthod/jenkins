@@ -1,0 +1,32 @@
+version: '3'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    expose:
+      - 8080
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internalnetwork
+
+  reverseproxy:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/reverseproxy.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nginxnetwork
+      - internalnetwork
+
+networks:
+    nginxnetwork:
+       external:
+            name: nginxnetwork
+    internalnetwork:
+        driver: overlay
+
